@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright
+          pip install playwright python-dotenv
           playwright install chromium
 
       - name: Run comment script
