@@ -2,6 +2,7 @@
 import os
 import json
 from urllib.parse import unquote
+from dotenv import load_dotenv
 
 
 # 配置
@@ -98,6 +99,8 @@ def init_localstorage(page, cookie_str):
 
 def get_all_cookies():
     """获取所有账号的 Cookie"""
+    load_dotenv()  # 自动加载 .env 文件（本地测试用）
+
     cookies_list = []
     single = os.environ.get('ZAIMANHUA_COOKIE')
     if single:

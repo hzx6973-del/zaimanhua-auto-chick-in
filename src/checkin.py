@@ -1,6 +1,7 @@
 import os
 import time
 from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
 
 # 配置
 MAX_RETRIES = 3
@@ -9,6 +10,8 @@ PAGE_TIMEOUT = 60000  # 60秒
 
 def get_all_cookies():
     """获取所有账号的 Cookie"""
+    load_dotenv()  # 自动加载 .env 文件（本地测试用）
+
     cookies_list = []
 
     # 兼容单账号配置
