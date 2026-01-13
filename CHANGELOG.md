@@ -5,6 +5,29 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.4.0] - 2026-01-13
+
+### Added
+
+- 新增 `src/auto_read.py` 阅读脚本，使用 v4 API 模拟阅读
+  - 通过 API 请求漫画章节图片实现阅读时长累计
+  - 支持任务 13（海螺小姐 - 累计观看十分钟漫画）自动化完成
+  - 智能任务状态监控，每分钟检查一次
+  - 支持 API 领取 + UI 领取双重回退机制
+
+### Fixed
+
+- 修复 `checkin.yml` 执行失败问题（恢复被误删的 `src/checkin.py`）
+- 修复 `watch.yml` 缺少 playwright 依赖的问题
+- 修复 `comment.py` 任务状态判断逻辑
+  - `status=2` 表示"可领取"而非"未完成"
+  - 当任务状态为 2 时自动领取奖励并返回成功
+
+### Changed
+
+- 用 `auto_read.py` 替换原有的 `watch.py`（已删除）
+- 更新 README.md，任务 13 现已支持自动化
+
 ## [1.3.4] - 2026-01-13
 
 ### Changed
