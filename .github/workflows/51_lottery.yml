@@ -1,0 +1,36 @@
+name: 51 Lottery Activity
+
+on:
+  schedule:
+    # 北京时间每天 15:00 (UTC 07:00)
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  lottery-51:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright requests python-dotenv
+          playwright install chromium
+
+      - name: Run 51 lottery activity
+        env:
+          ZAIMANHUA_COOKIE: ${{ secrets.ZAIMANHUA_COOKIE }}
+          ZAIMANHUA_COOKIE_1: ${{ secrets.ZAIMANHUA_COOKIE_1 }}
+          ZAIMANHUA_COOKIE_2: ${{ secrets.ZAIMANHUA_COOKIE_2 }}
+          ZAIMANHUA_COOKIE_3: ${{ secrets.ZAIMANHUA_COOKIE_3 }}
+          ZAIMANHUA_COOKIE_4: ${{ secrets.ZAIMANHUA_COOKIE_4 }}
+          ZAIMANHUA_COOKIE_5: ${{ secrets.ZAIMANHUA_COOKIE_5 }}
+        run: python src/51_lottery.py
