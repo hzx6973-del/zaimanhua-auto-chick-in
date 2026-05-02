@@ -369,19 +369,26 @@ def main():
     print(f"共发现 {len(cookies_list)} 个账号")
 
     all_success = True
-    for name, cookie_str in cookies_list:
+    for index, (name, cookie_str) in enumerate(cookies_list):
         print(f"\n{'='*50}")
         print(f"正在执行评论任务: {name}")
         print('='*50)
 
-        # 验证 Cookie 有效性
-        from utils import validate_cookie
-        is_valid, error_msg = validate_cookie(cookie_str)
-        if not is_valid:
-            print(f"[ERROR] Cookie 无效: {error_msg}")
-            print(f"请更新 {name} 的 Cookie")
+        # 验证 Cookie 有效性，如果失效尝试自动登录
+        # 使用对应的账号索引获取对应的多账号凭据
+        from auto_login import get_valid_cookie
+        valid_cookie, is_auto_login = get_valid_cookie(cookie_str, name, account_index=index if index > 0 else None)
+        
+        if not valid_cookie:
+            print(f"[ERROR] 无法获取有效Cookie")
             all_success = False
             continue
+        
+        if is_auto_login:
+            print(f"  [v] 使用自动登录获取的新Cookie")
+            cookie_str = valid_cookie
+        else:
+            print(f"  [v] 使用配置的Cookie")
 
         for attempt in range(1, MAX_RETRIES + 1):
             print(f"\n尝试第 {attempt}/{MAX_RETRIES} 次...")
