@@ -133,7 +133,11 @@ def validate_cookie(cookie_str):
 
 
 def get_all_cookies():
-    """获取所有账号的 Cookie"""
+    """获取所有账号的 Cookie
+    
+    如果未配置Cookie但配置了自动登录凭据，返回空字符串占位符
+    以便触发自动登录备用方案
+    """
     load_dotenv()  # 自动加载 .env 文件（本地测试用）
 
     cookies_list = []
@@ -150,6 +154,38 @@ def get_all_cookies():
             i += 1
         else:
             break
+    
+    # 如果没有配置Cookie，检查是否配置了自动登录凭据
+    if not cookies_list:
+        username = os.environ.get('ZAIMANHUA_USERNAME')
+        password = os.environ.get('ZAIMANHUA_PASSWORD')
+        if username and password:
+            # 返回空Cookie占位符，触发自动登录
+            cookies_list.append(('默认账号', ''))
+    
+    # 检查多账号的自动登录凭据
+    # 先找到最大的索引号
+    max_index = 0
+    for key in os.environ.keys():
+        if key.startswith('ZAIMANHUA_USERNAME_'):
+            try:
+                index = int(key.split('_')[-1])
+                max_index = max(max_index, index)
+            except ValueError:
+                continue
+    
+    # 根据最大索引遍历
+    for i in range(1, max_index + 1):
+        username = os.environ.get(f'ZAIMANHUA_USERNAME_{i}')
+        password = os.environ.get(f'ZAIMANHUA_PASSWORD_{i}')
+        if username and password:
+            # 检查是否已经有对应索引的Cookie
+            # cookies_list[0]是默认账号，cookies_list[i]应该是账号i
+            if i >= len(cookies_list):
+                cookies_list.append((f'账号 {i}', ''))
+            elif not cookies_list[i][1]:  # 如果已有占位符但为空
+                pass  # 保持现有占位符
+    
     return cookies_list
 
 
