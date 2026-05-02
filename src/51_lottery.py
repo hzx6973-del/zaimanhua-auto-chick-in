@@ -471,6 +471,43 @@ def do_drawing(page, index: int, total: int) -> str:
             except Exception as e:
                 print(f"    [debug] 获取页面文本异常: {e}")
 
+        # 方法6: 检测"谢谢参与"弹窗（可能没有"恭喜您获得"文本）
+        if prize_name == "未知奖品":
+            print("    [debug] 尝试检测谢谢参与弹窗...")
+            try:
+                # 检查是否有包含"谢谢参与"的任何元素
+                thank_you_elems = page.locator("text=谢谢参与").all()
+                for elem in thank_you_elems:
+                    if elem.is_visible(timeout=100):
+                        prize_name = "谢谢参与"
+                        print("    [debug] 找到 '谢谢参与'")
+                        break
+                
+                # 也检查body文本
+                if prize_name == "未知奖品":
+                    body_text = page.locator("body").inner_text(timeout=1000)
+                    if "谢谢参与" in body_text:
+                        prize_name = "谢谢参与"
+                        print("    [debug] 在body文本中找到 '谢谢参与'")
+            except:
+                pass
+
+        # 方法7: 检查是否有弹窗出现但内容未知（可能是未中奖）
+        if prize_name == "未知奖品":
+            print("    [debug] 检查是否有任何弹窗...")
+            try:
+                # 检查winPrize弹窗是否可见
+                win_prize = page.locator(".winPrize").first
+                if win_prize.is_visible(timeout=100):
+                    prize_text = win_prize.inner_text(timeout=1000)
+                    print(f"    [debug] winPrize弹窗内容: {prize_text[:100]}")
+                    # 如果弹窗可见但没有识别到奖品，可能是未中奖
+                    if "恭喜" not in prize_text and "获得" not in prize_text:
+                        prize_name = "未中奖"
+                        print("    [debug] 弹窗无奖品信息，判定为未中奖")
+            except:
+                pass
+
         print(f"    [v] 抽奖结果: {prize_name}")
 
         # 关闭弹窗

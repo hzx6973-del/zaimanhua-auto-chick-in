@@ -142,13 +142,13 @@ def get_all_cookies():
 
     cookies_list = []
     single = os.environ.get('ZAIMANHUA_COOKIE')
-    if single:
+    if single and single.strip():
         label = _make_account_label('默认账号', single)
         cookies_list.append((label, single))
     i = 1
     while True:
         cookie = os.environ.get(f'ZAIMANHUA_COOKIE_{i}')
-        if cookie:
+        if cookie and cookie.strip():
             label = _make_account_label(f'账号 {i}', cookie)
             cookies_list.append((label, cookie))
             i += 1
@@ -159,7 +159,7 @@ def get_all_cookies():
     if not cookies_list:
         username = os.environ.get('ZAIMANHUA_USERNAME')
         password = os.environ.get('ZAIMANHUA_PASSWORD')
-        if username and password:
+        if username and username.strip() and password and password.strip():
             # 返回空Cookie占位符，触发自动登录
             cookies_list.append(('默认账号', ''))
     
@@ -178,7 +178,7 @@ def get_all_cookies():
     for i in range(1, max_index + 1):
         username = os.environ.get(f'ZAIMANHUA_USERNAME_{i}')
         password = os.environ.get(f'ZAIMANHUA_PASSWORD_{i}')
-        if username and password:
+        if username and username.strip() and password and password.strip():
             # 检查是否已经有对应索引的Cookie
             # cookies_list[0]是默认账号，cookies_list[i]应该是账号i
             if i >= len(cookies_list):
